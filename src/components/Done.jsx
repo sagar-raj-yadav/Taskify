@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const TODO = () => {
+const TODO = ({heading}) => {
   const [hover, sethover] = useState(false);
   const [showcancel, setshowcancel] = useState(false);
   const [showinput, setshowinput] = useState(false);
@@ -10,7 +10,7 @@ const TODO = () => {
   const [item, setitem] = useState("");
 
   const AddTask = () => {
-    if (item.trim()) {
+    if (item.trim()!="") {
     settasks([...tasks, item]);
     setitem("");
     }
@@ -35,7 +35,7 @@ const TODO = () => {
     <>
       <div style={styles.container}>
         <div style={styles.top}>
-          <p>TODO</p>
+          <p>{heading}</p>
           <p>click</p>
         </div>
 
@@ -142,7 +142,7 @@ inputcontainer:{
     height: "30px", //  remains constant
     border: "none",
     background: "none",
-    fontSize: "15px",
+    fontSize: "clamp(0.5rem, 2vw, 1rem)",  //font size screen ke according change hoga
     fontWeight: "bold",
     transition: "width 0.3s ease",
     textAlign: "center",
