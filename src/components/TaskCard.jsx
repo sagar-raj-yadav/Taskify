@@ -1,17 +1,25 @@
 import { useState } from "react";
+import Popup from './PopUp';
 
-const TODO = ({heading}) => {
+const TODO = ({heading,tasks,handleDragStart , createtaskinput, updateHeading }) => {
   const [hover, sethover] = useState(false);
   const [showcancel, setshowcancel] = useState(false);
   const [showinput, setshowinput] = useState(false);
+  
 
   //add item state
-  const [tasks, settasks] = useState([]);
   const [item, setitem] = useState("");
+
+  //open and close popup state 
+  const [open,setopen]=useState(false);
+
+    // State for editable heading
+    const [newHeading, setnewHeading] = useState("");
+
 
   const AddTask = () => {
     if (item.trim()!="") {
-    settasks([...tasks, item]);
+      tasks.push(item);
     setitem("");
     }
   };
@@ -31,23 +39,50 @@ const TODO = ({heading}) => {
     showinputAndcancel();
   };
 
+  const handleCreateHeading = () => {
+    if (newHeading.trim() !== "") {
+      updateHeading(newHeading);
+    }
+  };
+
   return (
     <>
       <div style={styles.container}>
         <div style={styles.top}>
+        {createtaskinput ? (
+          <>
+            <input
+              style={styles.headingInput}
+              value={newHeading}
+              onChange={(e) => setnewHeading(e.target.value)}
+              placeholder="Enter new heading"
+            />
+            <button style={styles.createButton} onClick={handleCreateHeading}>
+              Create
+            </button>
+          </>
+        ) : (
           <p>{heading}</p>
+        )}
           <p>click</p>
         </div>
 
         {tasks.map((value, index) => {
           return (
-            <div style={styles.alltask} key={index}>
-            <button style={styles.itembutton}>
+            <div 
+            style={styles.alltask} 
+            draggable
+            onDragStart={(e) => handleDragStart(e, value)}
+             key={index}>
+            <button onClick={()=>setopen(true)} style={styles.itembutton}>
             {value}
             </button>
             </div>
           )
         })}
+
+        {open && <Popup task={heading} onClose={()=>setopen(false)}/>}
+        
 
         {showinput ? (
           <div style={styles.inputcontainer}>
@@ -75,6 +110,8 @@ const TODO = ({heading}) => {
           >
             {showcancel ? "Add" : "+  Add a Task"}
           </button>
+
+
           {showcancel && (
             <button onClick={hideinput} style={styles.cancelbutton}>
               x
@@ -88,11 +125,13 @@ const TODO = ({heading}) => {
 
 const styles = {
   container: {
-    border: "5px solid black",
-    width: "40%",
-    backgroundColor: "rgb(242, 238, 237)",
-    borderRadius: "10px",
+    border: "1px solid #ccc",
+    width: "90%",
+    backgroundColor: "rgb(233, 228, 228,0.8)",
+    borderRadius: "8px",
     padding: "10px",
+    fontFamily: "Arial, sans-serif",
+    
   },
   top: {
     display: "flex",
@@ -100,42 +139,42 @@ const styles = {
   },
   alltask:{
     display: "flex",
-    marginTop:"10px"
+    padding: "4px",
+    marginTop:"2px"
   },
   itembutton: {
   border: "none", // Remove border
   outline: "none", // Remove focus outline
   width: "90%", 
-  backgroundColor: "white", // Keep red background
-  borderRadius: "20px", // Rounded corners
+  borderRadius: "8px", // Rounded corners
   cursor: "pointer", // Pointer cursor for interactivity
   fontSize: "16px", 
+  border:"none",
+  background:"none",
+  backgroundColor: "#f9f9f9",
   fontWeight: "bold", 
-  padding: "10px", // Add padding for better spacing
+  padding: "4px", // Add padding for better spacing
   boxShadow: "none", // Ensure no extra shadows
   margin: "0", // Remove any default margin
 },
 inputcontainer:{
     display: "flex",
-    marginTop:"10px",
-
+    marginTop:"3px"
 },
   addinput: {
-    borderRadius: "20px",
-    padding: "10px", // Add padding for better spacing
+    borderRadius: "8px",
+    padding: "6px", // Add padding for better spacing
     color: "grey",
-    width: "75%",
-
+    width: "85%",
   },
   addbuttoncontainer: {
     display: "flex",
-    alignItems: "center",
+    alignItems: "space-evenly",
     gap: "10px", 
-    marginTop: "30%",
+    marginTop: "20%",
   },
   addbutton: {
     flex: 1,
-    border: "2px solid red",
     cursor: "pointer",
     padding: "6px", // remains constant
     borderRadius: "8px", //  remains constant
@@ -147,19 +186,21 @@ inputcontainer:{
     transition: "width 0.3s ease",
     textAlign: "center",
     whiteSpace: "nowrap",
+    color: "black",
     overflow: "hidden",
     width: "100%",
-    backgroundColor:'grey'
   },
   addbuttonhover: {
-    backgroundColor: "orange",
+    // backgroundColor: "white",
+    color:"orange",
     width: "30%",
   },
   cancelbutton: {
-    width: "20%",
+    width: "25%",
     backgroundColor: "gray",
-    borderRadius: "8px",
+    borderRadius: "10px",
     color: "white",
+    padding:"4px",
     textAlign: "center",
     fontSize: "15px",
     cursor: "pointer",

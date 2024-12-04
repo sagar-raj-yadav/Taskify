@@ -1,12 +1,12 @@
 
 import React, { useState } from 'react';
 
-const PopUp = ({onClose}) => {
+const PopUp = ({onClose,task}) => {
 
   const [description,setdescription]=useState("");
   const [showinput,setshowinput]=useState(true);
   const [allActivity,setAllActivity]=useState([]);
-
+  const [selectedStatus, setSelectedStatus] = useState(task);
   const [activityvalue,setactivityvalue]=useState("");
 
   const commentfunction=()=>{
@@ -15,6 +15,14 @@ const PopUp = ({onClose}) => {
     setactivityvalue("");
     }
   }
+
+  const showinputfunction=()=>{
+    if(description.trim()!==""){
+    setshowinput(false);
+  }
+}
+
+
   return (
 <div style={styles.mainconatiner}>
     <div style={styles.container}>
@@ -24,12 +32,15 @@ const PopUp = ({onClose}) => {
     </div>
 
     <div style={styles.status}>
-    <p>status :</p>
-    <select style={styles.select}>
-      <option>TODO</option>
-      <option><p>DOING</p></option> 
-      <option>DONE</option>
-    </select>
+    <p>status :{task}</p>
+    {/* <select
+    value={selectedStatus} 
+    onChange={(e) => setSelectedStatus(e.target.value)} 
+     style={styles.select} >
+       <option value="TODO">TODO</option>
+        <option value="DOING">DOING</option>
+        <option value="DONE">DONE</option>
+    </select> */}
     </div>
    
    <div style={styles.description}>
@@ -37,7 +48,7 @@ const PopUp = ({onClose}) => {
 
 
     {!showinput ? (
-      <button style={styles.descriptionbutton}>{description}</button> // Show description text after "Add" button click
+      <button style={styles.descriptionbutton}>{description.trim()!=="" && description}</button> // Show description text after "Add" button click
       ) : (
     <div style={styles.descriptionInputConatiner}>
     <textarea 
@@ -53,7 +64,7 @@ const PopUp = ({onClose}) => {
    />
 
       <button
-      onClick={()=>setshowinput(false)} 
+      onClick={showinputfunction} 
       style={styles.addbutton}>Add</button>
       </div>
     )}
@@ -104,6 +115,9 @@ const PopUp = ({onClose}) => {
       })
      }
 
+    <div style={styles.deletecontainer}>
+    <button style={styles.deletebutton}>Delete Task</button>
+    </div>
     </div>
 </div>
   )
@@ -231,6 +245,20 @@ const styles={
     cursor:'pointer',
     border:"none",
     padding:"6px"
+  },
+  deletecontainer:{
+    textAlign:"end",
+    marginRight:"10px",
+    marginTop:"40px"
+  },
+  deletebutton:{
+    border:"none",
+    borderRadius:"24px",
+    padding:"10px",
+    fontWeight:"bold",
+    backgroundColor:"rgb(246, 52, 52,0.9)",
+    color:"white",
+    fontStyle:"italic"
   }
 }
 export default PopUp;
