@@ -1,11 +1,11 @@
 import { useState } from "react";
 import Popup from './PopUp';
 
-const TODO = ({heading,tasks,handleDragStart , createtaskinput, updateHeading }) => {
+const TODO = ({heading,tasks,handleDragStart , createtaskinput,removeTaskCard, updateHeading }) => {
   const [hover, sethover] = useState(false);
   const [showcancel, setshowcancel] = useState(false);
   const [showinput, setshowinput] = useState(false);
-  
+  const [bordercolor,setbordercolor]=useState(false);
 
   //add item state
   const [item, setitem] = useState("");
@@ -16,7 +16,10 @@ const TODO = ({heading,tasks,handleDragStart , createtaskinput, updateHeading })
     // State for editable heading
     const [newHeading, setnewHeading] = useState("");
 
-
+    //open 3 dot
+    const [showdot, setshowdot] = useState(false);
+    const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
+  
   const AddTask = () => {
     if (item.trim()!="") {
       tasks.push(item);
@@ -45,9 +48,20 @@ const TODO = ({heading,tasks,handleDragStart , createtaskinput, updateHeading })
     }
   };
 
+    // Function to handle button click
+    const handleButtonClick = (e) => {
+      const rect = e.target.getBoundingClientRect(); // Get the button's position
+      setPopupPosition({
+        top: rect.bottom + window.scrollY,  // Position below the button
+        left: rect.left + window.scrollX,    // Align with the left of the button
+      });
+      setshowdot(!showdot); // Toggle the popup
+    };
+  
+
   return (
     <>
-      <div style={styles.container}>
+      <div style={styles.container} onDrop={(e) => handleDrop(e)}>
         <div style={styles.top}>
         {createtaskinput ? (
           <>
@@ -60,11 +74,40 @@ const TODO = ({heading,tasks,handleDragStart , createtaskinput, updateHeading })
             <button style={styles.createButton} onClick={handleCreateHeading}>
               Create
             </button>
+
+            <button onClick={removeTaskCard} style={styles.cancelbutton}>
+           Cancel
+            </button>
           </>
         ) : (
           <p>{heading}</p>
         )}
-          <p>click</p>
+
+
+        {
+          heading!="" && 
+          <button style={styles.threedot} onClick={handleButtonClick}>
+        click
+      </button> 
+        }
+        
+
+
+          {showdot && (
+        <div
+          style={{
+            ...styles.pop,
+            top: popupPosition.top, // Position from the button
+            left: popupPosition.left, // Align with the button
+          }}
+        >
+                <button style={styles.listButton}>list 1</button>
+          <button style={styles.listButton}>list 2</button>
+          <button style={styles.listButton}>list 3</button>
+        </div>
+      )}
+
+
         </div>
 
         {tasks.map((value, index) => {
@@ -72,9 +115,12 @@ const TODO = ({heading,tasks,handleDragStart , createtaskinput, updateHeading })
             <div 
             style={styles.alltask} 
             draggable
-            onDragStart={(e) => handleDragStart(e, value)}
+          onDragStart={(e) => handleDragStart(e, value, heading)}
              key={index}>
-            <button onClick={()=>setopen(true)} style={styles.itembutton}>
+            <button
+             onMouseEnter={()=>setbordercolor(true)} 
+             onMouseLeave={() => setbordercolor(false)}
+             onClick={()=>setopen(true)} style={{ ...styles.itembutton, ...(bordercolor && styles.hoverbordercolor)}}>
             {value}
             </button>
             </div>
@@ -126,8 +172,8 @@ const TODO = ({heading,tasks,handleDragStart , createtaskinput, updateHeading })
 const styles = {
   container: {
     border: "1px solid #ccc",
-    width: "90%",
-    backgroundColor: "rgb(233, 228, 228,0.8)",
+    width: "300px",
+    backgroundColor: "rgb(233, 228, 228,1)",
     borderRadius: "8px",
     padding: "10px",
     fontFamily: "Arial, sans-serif",
@@ -137,33 +183,67 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
   },
-  alltask:{
+  threedot: {
+    height: "30px",
+    width: "30px",
+    backgroundColor: "#ccc", // Added color for visibility
+    borderRadius: "50%",
+    cursor: "pointer",
+  },
+  pop: {
+    position: "absolute",  // Changed to absolute positioning
+    backgroundColor: "white",
+    padding: "8px",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+    borderRadius: "8px",
+    zIndex: 1000,
+  },
+  listButton: {
+    display: "block", // Ensures buttons stack vertically
+    width: "100%", // Makes buttons fill the available space in the popup
+    padding: "10px",
+    marginBottom: "8px", // Adds space between buttons
+    backgroundColor: "#f0f0f0", // Light background for the buttons
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
+  },
+  alltask: {
     display: "flex",
     padding: "4px",
-    marginTop:"2px"
+    marginTop: "2px",
+    justifyContent: "flex-start",
   },
+  
   itembutton: {
-  border: "none", // Remove border
-  outline: "none", // Remove focus outline
-  width: "90%", 
-  borderRadius: "8px", // Rounded corners
-  cursor: "pointer", // Pointer cursor for interactivity
-  fontSize: "16px", 
-  border:"none",
-  background:"none",
-  backgroundColor: "#f9f9f9",
-  fontWeight: "bold", 
-  padding: "4px", // Add padding for better spacing
-  boxShadow: "none", // Ensure no extra shadows
-  margin: "0", // Remove any default margin
-},
+    border: "2px solid grey", 
+    outline: "none", 
+    height: "auto", 
+    borderRadius: "8px", 
+    cursor: "pointer",
+    fontSize: "14px",
+    background: "none",
+    backgroundColor: "#f9f9f9",
+    fontWeight: "bold",
+    padding: "8px", 
+    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+    margin: "0",
+    textAlign: "center", 
+    wordWrap: "break-word", 
+    whiteSpace: "normal", 
+    width: "90%",
+  },
+  hoverbordercolor: {
+    border: "2px solid blue", 
+    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.15)", 
+  },
 inputcontainer:{
     display: "flex",
     marginTop:"3px"
 },
   addinput: {
     borderRadius: "8px",
-    padding: "6px", // Add padding for better spacing
+    padding: "6px", 
     color: "grey",
     width: "85%",
   },
@@ -181,7 +261,8 @@ inputcontainer:{
     height: "30px", //  remains constant
     border: "none",
     background: "none",
-    fontSize: "clamp(0.5rem, 2vw, 1rem)",  //font size screen ke according change hoga
+    // fontSize: "clamp(0.5rem, 2vw, 1rem)",  //font size screen ke according change hoga
+    fontSize:"14px",
     fontWeight: "bold",
     transition: "width 0.3s ease",
     textAlign: "center",
@@ -191,7 +272,6 @@ inputcontainer:{
     width: "100%",
   },
   addbuttonhover: {
-    // backgroundColor: "white",
     color:"orange",
     width: "30%",
   },
@@ -206,7 +286,6 @@ inputcontainer:{
     cursor: "pointer",
     height: "30px",
     border: "none",
-    backgroundColor:"red"
   },
 };
 
