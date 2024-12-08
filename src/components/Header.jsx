@@ -96,6 +96,7 @@ const styles = {
   navLink: {
     textDecoration: 'none',
     color: '#fff',
+    flexDirection:"column",
     fontSize: '18px',
     position: 'relative',
     display: 'flex',

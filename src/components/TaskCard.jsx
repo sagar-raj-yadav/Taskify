@@ -5,7 +5,8 @@ const TODO = ({heading,tasks,handleDragStart , createtaskinput,removeTaskCard, u
   const [hover, sethover] = useState(false);
   const [showcancel, setshowcancel] = useState(false);
   const [showinput, setshowinput] = useState(false);
-  const [bordercolor,setbordercolor]=useState(false);
+  const [hoveredTask, setHoveredTask] = useState(null); // Track hover state for each task
+
 
   //add item state
   const [item, setitem] = useState("");
@@ -80,15 +81,15 @@ const TODO = ({heading,tasks,handleDragStart , createtaskinput,removeTaskCard, u
             </button>
           </>
         ) : (
-          <p>{heading}</p>
+          <p style={styles.heading}>{heading}</p>
         )}
 
 
         {
-          heading!="" && 
-          <button style={styles.threedot} onClick={handleButtonClick}>
+          heading!=="" && 
+        <button style={styles.threedot} onClick={handleButtonClick}>
         ...
-      </button> 
+        </button> 
         }
         
 
@@ -101,31 +102,40 @@ const TODO = ({heading,tasks,handleDragStart , createtaskinput,removeTaskCard, u
             left: popupPosition.left, // Align with the button
           }}
         >
-                <button style={styles.listButton}>list 1</button>
-          <button style={styles.listButton}>list 2</button>
-          <button style={styles.listButton}>list 3</button>
+          <button style={styles.listButton}>Edit</button>
+          <button style={styles.listButton}>Delete</button>
+          <button style={styles.listButton}>More</button>
         </div>
       )}
 
 
         </div>
 
-        {tasks.map((value, index) => {
-          return (
-            <div 
-            style={styles.alltask} 
-            draggable
+    {
+      tasks.map((value, index) => {
+      return (
+        <div 
+          style={styles.alltask} 
+          draggable
           onDragStart={(e) => handleDragStart(e, value, heading)}
-             key={index}>
-            <button
-             onMouseEnter={()=>setbordercolor(true)} 
-             onMouseLeave={() => setbordercolor(false)}
-             onClick={()=>setopen(true)} style={{ ...styles.itembutton, ...(bordercolor && styles.hoverbordercolor)}}>
-            {value}
-            </button>
-            </div>
-          )
-        })}
+          key={index}
+        >
+         <button
+  onMouseEnter={() => setHoveredTask(index)} // Set the hovered task index
+  onMouseLeave={() => setHoveredTask(null)} // Reset when mouse leaves
+  onClick={() => setopen(true)} 
+  style={{
+    ...styles.itembutton,
+    ...(hoveredTask === index && styles.hoverbordercolor), // Apply hover style only for the hovered task
+  }}
+>
+  {value}
+</button>
+        </div>
+      )
+    })
+  }
+
 
         {open && <Popup task={heading} onClose={()=>setopen(false)}/>}
         
@@ -151,10 +161,10 @@ const TODO = ({heading,tasks,handleDragStart , createtaskinput,removeTaskCard, u
             onMouseLeave={() => sethover(false)}
             style={{
               ...styles.addbutton,
-              ...(hover ? styles.addbuttonhover : ""),
+              ...(hover ? styles.addbuttonhover : {}),
             }}
           >
-            {showcancel ? "Add" : "+  Add a Task"}
+            {showcancel ? "+ Add" : "+  Add a Task"}
           </button>
 
 
@@ -177,18 +187,19 @@ const styles = {
     borderRadius: "8px",
     padding: "10px",
     fontFamily: "Arial, sans-serif",
-    
   },
   top: {
     display: "flex",
     justifyContent: "space-between",
+    alignItems: "center",
   },
   threedot: {
-    height: "30px",
-    textAlign:"center",
+    textAlign: "center",
     width: "30px",
-    backgroundColor: "#ccc", // Added color for visibility
-    borderRadius: "50%",
+    fontSize: "20px",
+    border: "none",
+    backgroundColor: "rgb(233, 228, 228,1)",
+    background: "none",
     cursor: "pointer",
   },
   pop: {
@@ -202,9 +213,7 @@ const styles = {
   listButton: {
     display: "block", // Ensures buttons stack vertically
     width: "100%", // Makes buttons fill the available space in the popup
-    padding: "10px",
-    marginBottom: "8px", // Adds space between buttons
-    backgroundColor: "#f0f0f0", // Light background for the buttons
+    marginBottom: "5px", // Adds space between buttons
     border: "none",
     borderRadius: "4px",
     cursor: "pointer",
@@ -217,36 +226,39 @@ const styles = {
   },
   
   itembutton: {
-    border: "2px solid grey", 
     outline: "none", 
-    height: "auto", 
-    borderRadius: "8px", 
+    borderRadius: "14px", 
     cursor: "pointer",
     fontSize: "14px",
     background: "none",
-    backgroundColor: "#f9f9f9",
+    border:"none",
+    backgroundColor: " rgb(249, 249, 249,0.8)",
     fontWeight: "bold",
     padding: "8px", 
-    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+    boxShadow: "0 4px 4px rgba(0, 0, 0, 0.1)",
     margin: "0",
     textAlign: "center", 
     wordWrap: "break-word", 
     whiteSpace: "normal", 
     width: "90%",
+    
   },
   hoverbordercolor: {
-    border: "2px solid blue", 
+    backgroundColor:"rgb(194, 248, 248,0.6)",
     boxShadow: "0 4px 6px rgba(0, 0, 0, 0.15)", 
+    
   },
-inputcontainer:{
+  inputcontainer:{
     display: "flex",
-    marginTop:"3px"
-},
+    marginTop:"3px",
+  },
   addinput: {
-    borderRadius: "8px",
-    padding: "6px", 
-    color: "grey",
-    width: "85%",
+    borderRadius:"16px",
+    padding:"8px",
+    border:"none",
+    fontSize:"14px",
+    width:"88%",
+    marginLeft:"5px"
   },
   addbuttoncontainer: {
     display: "flex",
@@ -258,14 +270,13 @@ inputcontainer:{
     flex: 1,
     cursor: "pointer",
     padding: "6px", // remains constant
-    borderRadius: "8px", //  remains constant
-    height: "30px", //  remains constant
+    borderRadius: "8px", // remains constant
+    height: "30px", // remains constant
     border: "none",
-    background: "none",
-    // fontSize: "clamp(0.5rem, 2vw, 1rem)",  //font size screen ke according change hoga
+    backgroundColor: "rgb(233, 228, 228,1)", // Default background color
     fontSize:"14px",
     fontWeight: "bold",
-    transition: "width 0.3s ease",
+    transition: "background-color 0.3s ease", // Smooth transition for background color
     textAlign: "center",
     whiteSpace: "nowrap",
     color: "black",
@@ -273,21 +284,43 @@ inputcontainer:{
     width: "100%",
   },
   addbuttonhover: {
-    color:"orange",
-    width: "30%",
+    backgroundColor: "rgb(231, 248, 233,0.6)", // Change background color on hover
+    color: "orange",
+  },
+  headingInput:{
+    borderRadius:"12px",
+    padding:"6px",
+    border:"none"
+  },
+  heading:{
+    fontSize:"18px",
+    fontWeight:"bold"
   },
   cancelbutton: {
-    width: "25%",
-    backgroundColor: "gray",
+    width: "16%",
+    backgroundColor: "red",
     borderRadius: "10px",
     color: "white",
     padding:"4px",
     textAlign: "center",
-    fontSize: "15px",
+    fontSize: "12px",
     cursor: "pointer",
     height: "30px",
     border: "none",
   },
+  createButton:{
+    width: "18%",
+    backgroundColor: "rgb(112, 184, 254)",
+    borderRadius: "10px",
+    color: "white",
+    padding:"4px",
+    textAlign: "center",
+    fontSize: "12px",
+    fontWeight:"bold",
+    cursor: "pointer",
+    height: "30px",
+    border: "none",
+  }
 };
 
 export default TODO;

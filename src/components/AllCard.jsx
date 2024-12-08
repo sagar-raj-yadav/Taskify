@@ -6,6 +6,7 @@ const AllCard = () => {
   const [doingTasks, setDoingTasks] = useState([]);
   const [doneTasks, setDoneTasks] = useState([]);
   const [taskCards, setTaskCards] = useState([]);
+  const [tempCard, setTempCard] = useState(null); // For temporarily holding the new card
   const [createtaskinput, setcreatetaskinput] = useState(false);
 
   const handleDrop = (e, index) => {
@@ -14,24 +15,24 @@ const AllCard = () => {
 
     // Remove the task from the source card
     if (sourceCardIndex === 0) {
-      setTodoTasks(prev => prev.filter(item => item !== task));
+      setTodoTasks((prev) => prev.filter((item) => item !== task));
     } else if (sourceCardIndex === 1) {
-      setDoingTasks(prev => prev.filter(item => item !== task));
+      setDoingTasks((prev) => prev.filter((item) => item !== task));
     } else if (sourceCardIndex === 2) {
-      setDoneTasks(prev => prev.filter(item => item !== task));
+      setDoneTasks((prev) => prev.filter((item) => item !== task));
     } else {
       const updatedTaskCards = [...taskCards];
-      updatedTaskCards[sourceCardIndex - 3].tasks = updatedTaskCards[sourceCardIndex - 3].tasks.filter(item => item !== task);
+      updatedTaskCards[sourceCardIndex - 3].tasks = updatedTaskCards[sourceCardIndex - 3].tasks.filter((item) => item !== task);
       setTaskCards(updatedTaskCards);
     }
 
     // Add the task to the destination card
     if (index === 0) {
-      setTodoTasks(prev => [...prev, task]);
+      setTodoTasks((prev) => [...prev, task]);
     } else if (index === 1) {
-      setDoingTasks(prev => [...prev, task]);
+      setDoingTasks((prev) => [...prev, task]);
     } else if (index === 2) {
-      setDoneTasks(prev => [...prev, task]);
+      setDoneTasks((prev) => [...prev, task]);
     } else {
       const updatedTaskCards = [...taskCards];
       updatedTaskCards[index - 3].tasks.push(task);
@@ -45,45 +46,50 @@ const AllCard = () => {
   };
 
   const createNewTaskCard = () => {
-    setTaskCards(prev => [...prev, { heading: "", tasks: [] }]);
+    setTempCard({ heading: "", tasks: [] }); // Create a temporary card
     setcreatetaskinput(true);
   };
 
-  const updateTaskCardHeading = (index, newHeading) => {
-    setTaskCards(prev => {
+  const updateTaskCardHeading = (newHeading) => {
+    if (!tempCard) return;
+
+    // Finalize the card and add it after "Done"
+    setTaskCards((prev) => {
       const updatedCards = [...prev];
-      updatedCards[index].heading = newHeading;
-      return updatedCards;
+      updatedCards.splice(0, 0);
+      return [...prev, { ...tempCard, heading: newHeading }];
     });
+
+    setTempCard(null);
     setcreatetaskinput(false);
   };
 
   const removeTaskCard = (index) => {
-    setTaskCards(prev => prev.filter((_, i) => i !== index));
+    setTaskCards((prev) => prev.filter((_, i) => i !== index));
   };
 
+ 
   return (
     <div style={styles.container}>
 
       {/* Create Task Button */}
       <button style={styles.createtask} onClick={createNewTaskCard}>
-        Create a Card
+       + Create a Card 
       </button>
 
-       {/* Dynamically Created Task Cards */}
-       {taskCards.map((taskCard, index) => (
-        <div key={index} style={styles.item} onDrop={(e) => handleDrop(e, index + 3)} onDragOver={(e) => e.preventDefault()}>
+
+ {/* Dynamically Created Task Cards starts*/}
+      {tempCard && (
+        <div style={styles.item}>
           <Todo
-            heading={taskCard.heading}
-            tasks={taskCard.tasks}
-            handleDragStart={(e, task) => handleDragStart(e, task, index + 3)}
-            createtaskinput={createtaskinput && index === taskCards.length - 1} 
-            updateHeading={(newHeading) => updateTaskCardHeading(index, newHeading)}
-            removeTaskCard={() => removeTaskCard(index)}
+            heading={tempCard.heading}
+            tasks={tempCard.tasks}
+            createtaskinput={createtaskinput}
+            updateHeading={updateTaskCardHeading}
           />
         </div>
-      ))}
-
+      )}
+ {/* Dynamically Created Task Cards end*/}
 
       <div
         style={styles.item}
@@ -121,6 +127,24 @@ const AllCard = () => {
         />
       </div>
     
+
+  {/*list of all Dynamically Created Task Cards starts*/}
+  {taskCards.map((card, index) => (
+    <div key={index} style={styles.item}
+     onDrop={(e) => handleDrop(e, index + 3)}
+      onDragOver={(e) => e.preventDefault()}>
+  <Todo
+    heading={card.heading}
+    tasks={card.tasks}
+    handleDragStart={(e, task) => handleDragStart(e, task, index + 3)}
+    removeTaskCard={() => removeTaskCard(index)}
+  />
+  </div>
+))}
+
+  {/*list of all Dynamically Created Task Cards starts*/}
+
+      
     </div>
   );
 };
@@ -140,21 +164,25 @@ const styles = {
     borderRadius: "8px",
     display: "inline-block",
   },
- createtask: {
-  width: "14%",
-  height: "80px",
-  padding: "8px",
-  margin: "10px",
-  borderRadius: "10px",
-  border: "none",
-  background: "none",
-  backgroundColor: "rgb(84, 166, 245)",
-  fontWeight: "bold",
-  color: "white",
-  cursor: "pointer",
-  flexWrap: "wrap",
-  whiteSpace: "nowrap",  // Prevents text wrapping
-},
+  createtask: {
+    width: "100%", // Full width for smaller screens
+    maxWidth: "200px", // Set a maximum width
+    height: "10%", // Adjust height for better responsiveness
+    padding: "8px 16px", // Even padding for better look
+    margin: "10px auto", // Center the button horizontally
+    borderRadius: "10px",
+    border: "none",
+    background: "none",
+    backgroundColor: "rgb(126, 226, 248,0.8)",
+    fontWeight: "bold",
+    fontSize: "1rem", // Use relative font size for better scaling
+    color: "white",
+    cursor: "pointer",
+    whiteSpace: "nowrap",
+    display: "block", // Makes it responsive and avoids flex issues
+    textAlign: "center", // Centers the text
+  },
+
 
   // Hide the scrollbar line but keep scrolling functionality
   hideScrollbar: {
