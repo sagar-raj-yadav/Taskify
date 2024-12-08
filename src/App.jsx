@@ -1,18 +1,20 @@
-import React from 'react'
-import AllCard from './components/AllCard';
-import Header from './components/Header';
+import AllComponent from './AllComponent';
 import './App.css';
-
 import Members from './components/Members';
+import Header from './components/Header';
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
+const router = createBrowserRouter([
+  { path: "/", element: <AllComponent /> },
+  { path: "/member", element: <Members /> }
+]);
 
 const App = () => {
   return (
     <div>
-   <Header/>
-     <AllCard/>
-    {/* <Members/> */}
+      <RouterProvider router={router} />
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;

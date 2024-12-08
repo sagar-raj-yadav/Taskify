@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import Header from './Header';
+
 
 const Members = () => {
   const [members, setMembers] = useState([]);
@@ -48,6 +50,8 @@ const Members = () => {
   };
 
   return (
+    <>
+      <Header/>
     <div style={styles.container}>
       <button onClick={() => setShowInputs(!showInputs)} style={styles.addButton}>
         Add Member
@@ -123,6 +127,8 @@ const Members = () => {
         </tbody>
       </table>
     </div>
+    </>
+
   );
 };
 

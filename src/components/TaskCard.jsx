@@ -87,7 +87,7 @@ const TODO = ({heading,tasks,handleDragStart , createtaskinput,removeTaskCard, u
         {
           heading!="" && 
           <button style={styles.threedot} onClick={handleButtonClick}>
-        click
+        ...
       </button> 
         }
         
@@ -185,6 +185,7 @@ const styles = {
   },
   threedot: {
     height: "30px",
+    textAlign:"center",
     width: "30px",
     backgroundColor: "#ccc", // Added color for visibility
     borderRadius: "50%",

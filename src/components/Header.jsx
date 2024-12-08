@@ -1,17 +1,11 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useState } from 'react';
 
 const Navbar = () => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const navigate = useNavigate();
+  const [isDropdownVisible, setDropdownVisible] = useState(false);
 
   const toggleDropdown = () => {
-    setIsDropdownOpen((prev) => !prev);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/');
+    setDropdownVisible(prevState => !prevState);
   };
 
   return (
@@ -27,37 +21,21 @@ const Navbar = () => {
       </div>
 
       <div style={styles.navLinks}>
-        {/* <Link to="/my-orders" style={styles.navLink}>
-          <p style={styles.icon}>🛒</p>
-        </Link>
-
-        <Link to="/cart" style={styles.navLink}>
-          <div style={styles.cartIcon}>
-            <p style={styles.icon}>🛍️</p>
-            <span style={styles.cartCount}>5</span>
-          </div>
-        </Link>
-
-        <Link to="/blog" style={styles.navLink}>
+        <Link to="/member" style={styles.navLink}>
           <p style={styles.icon}>📝</p>
-          <p style={styles.text}>Blog</p>
-        </Link> */}
+          <p style={styles.text}>Members</p>
+        </Link>
 
-        <div style={styles.profileContainer}>
+        <div style={styles.profileContainer} onMouseEnter={toggleDropdown} onMouseLeave={toggleDropdown}>
           <img
             alt="Profile"
             src="https://www.w3schools.com/w3images/avatar2.png"
             style={styles.profileIcon}
-            onClick={toggleDropdown}
           />
-          {isDropdownOpen && (
+          {isDropdownVisible && (
             <div style={styles.dropdownMenu}>
-              <p style={styles.dropdownItem} onClick={() => navigate('/profile')}>
-                Profile
-              </p>
-              <p style={styles.dropdownItem} onClick={handleLogout}>
-                Logout
-              </p>
+              <div style={styles.dropdownItem}>Profile</div>
+              <div style={styles.dropdownItem}>Logout</div>
             </div>
           )}
         </div>
@@ -99,7 +77,7 @@ const styles = {
     margin: '0 30px 0 0',
   },
   input: {
-    width:"60%",
+    width: "60%",
     padding: '7px 18px',
     borderRadius: '50px',
     border: '1px solid #ddd',
@@ -109,10 +87,6 @@ const styles = {
     outline: 'none',
     transition: 'border 0.3s ease',
     boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
-  },
-  inputFocus: {
-    border: '1px solid #007bff',
-    boxShadow: '0 0 8px rgba(0,123,255,0.5)',
   },
   navLinks: {
     display: 'flex',
@@ -130,32 +104,20 @@ const styles = {
     borderRadius: '25px',
     transition: 'background-color 0.3s ease',
   },
+  navLinkHover: {
+    backgroundColor: '#555', // Adding hover effect for links
+  },
   icon: {
     fontSize: '20px',
   },
-  cartIcon: {
-    position: 'relative',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  cartCount: {
-    position: 'absolute',
-    top: '-8px',
-    right: '-8px',
-    backgroundColor: '#f44336',
-    color: '#fff',
-    borderRadius: '50%',
-    padding: '4px 8px',
-    fontSize: '12px',
-  },
   profileContainer: {
     position: 'relative',
+    cursor: 'pointer',
   },
   profileIcon: {
     height: '40px',
     width: '40px',
     borderRadius: '50%',
-    cursor: 'pointer',
     objectFit: 'cover',
     transition: 'transform 0.3s ease',
   },
@@ -181,9 +143,6 @@ const styles = {
     cursor: 'pointer',
     borderBottom: '1px solid #ddd',
     textAlign: 'center',
-  },
-  dropdownItemLast: {
-    borderBottom: 'none',
   },
   text: {
     marginLeft: '8px',

@@ -140,19 +140,21 @@ const styles = {
     borderRadius: "8px",
     display: "inline-block",
   },
-  createtask: {
-    width: "50%",
-    height: "40px",
-    padding: "8px",
-    margin: "10px",
-    borderRadius: "10px",
-    border: "none",
-    background: "none",
-    backgroundColor: "rgb(84, 166, 245)",
-    fontWeight: "bold",
-    color: "white",
-    cursor: "pointer",
-  },
+ createtask: {
+  width: "14%",
+  height: "80px",
+  padding: "8px",
+  margin: "10px",
+  borderRadius: "10px",
+  border: "none",
+  background: "none",
+  backgroundColor: "rgb(84, 166, 245)",
+  fontWeight: "bold",
+  color: "white",
+  cursor: "pointer",
+  flexWrap: "wrap",
+  whiteSpace: "nowrap",  // Prevents text wrapping
+},
 
   // Hide the scrollbar line but keep scrolling functionality
   hideScrollbar: {
