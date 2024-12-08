@@ -1,8 +1,7 @@
 
 ## Problem 1:
-Static cards (TODO, Doing, Done) ke indexes 0, 1, 2 the. Dynamic cards ka index map karte waqt directly 0 se start kar rahe the, is wajah se index conflict ho raha tha, aur drop events galat cards par trigger ho rahe the.
+The indexes of static cards (TODO, Doing, Done) were 0, 1, 2. When mapping the indexes for dynamic cards, they were starting directly from 0, which caused an index conflict and led to drop events being triggered on the wrong cards.
 
-Solution:
-Dynamic cards ke indexes ko static cards ke baad offset karke shuru kiya (index + 3), taaki static (0, 1, 2) aur dynamic cards (3, 4, ...`) ke indexes alag-alag ho jayein.
+Solution: I started the indexes for the dynamic cards with an offset from the static cards (index + 3), so that the indexes for static (0, 1, 2) and dynamic cards (3, 4, ...) are separate.
 
 ## problem 2:
