@@ -1,3 +1,5 @@
+# Live Link -> https://taskiiiify.netlify.app/
+
 
 ## Problem 1:
 The indexes of static cards (TODO, Doing, Done) were 0, 1, 2. When mapping the indexes for dynamic cards, they were starting directly from 0, which caused an index conflict and led to drop events being triggered on the wrong cards.
