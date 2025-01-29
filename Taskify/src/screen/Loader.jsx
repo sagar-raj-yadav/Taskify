@@ -46,32 +46,32 @@ const Loader = () => {
           style={{
             ...styles.dot,
             ...styles.dot1,
-            width: '20px',  // Reduced size
-            height: '20px', // Reduced size
+            width: '10px',  // Reduced size
+            height: '10px', // Reduced size
           }}
         ></span>
         <span
           style={{
             ...styles.dot,
             ...styles.dot2,
-            width: '20px',  // Reduced size
-            height: '20px', // Reduced size
+             width: '10px',  // Reduced size
+            height: '10px', // Reduced size
           }}
         ></span>
         <span
           style={{
             ...styles.dot,
             ...styles.dot3,
-            width: '20px',  // Reduced size
-            height: '20px', // Reduced size
+             width: '10px',  // Reduced size
+            height: '10px', // Reduced size
           }}
         ></span>
         <span
           style={{
             ...styles.dot,
             ...styles.dot4,
-            width: '20px',  // Reduced size
-            height: '20px', // Reduced size
+             width: '10px',  // Reduced size
+            height: '10px', // Reduced size
           }}
         ></span>
       </div>
