@@ -3,8 +3,8 @@ import axios from 'axios';
 import TaskCard from './TaskCard';
 import TaskForm from './TaskForm';
 import PropTypes from 'prop-types';
-
-const TaskSection = ({title, tasks, addTask}) => {
+import Loader from '../screen/Loader'
+const TaskSection = ({isLoading,title, tasks, addTask}) => {
   const [showForm, setShowForm] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
   const [hover, sethover] = useState(false);
@@ -56,7 +56,13 @@ const TaskSection = ({title, tasks, addTask}) => {
     <div style={styles.container}>
       <h3>{title}</h3>
 
-      {tasks.map((task,index) => (
+      {isLoading ? (
+        <>
+            <Loader />
+            {/* <Loader /> */}
+            </>
+      ) : (
+      tasks.map((task,index) => (
         <div key={task._id}>
           {/* Show only the title initially */}
           {opentaskcard === task._id ? (
@@ -89,7 +95,8 @@ const TaskSection = ({title, tasks, addTask}) => {
             </button>
           )}
         </div>
-      ))}
+      ))
+      )}
 
       <div style={styles.formContainer}>
         {showForm && (
@@ -185,6 +192,7 @@ export default TaskSection;
 
 TaskSection.propTypes = {
   title: PropTypes.string.isRequired,
+  isLoading:PropTypes.string.isRequired,
   tasks: PropTypes.arrayOf(
     PropTypes.shape({
       title: PropTypes.string.isRequired,

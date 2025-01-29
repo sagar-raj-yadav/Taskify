@@ -22,7 +22,7 @@ const Navbar = () => {
 
       <div style={styles.navLinks}>
 
-      <Link to="/streak" style={styles.navLink}>
+      <Link to="/" style={styles.navLink}>
   <div style={styles.badgeContainer}>
     <img src="streak.png" height="20px"  />
     <span style={styles.badge}>0</span>
@@ -30,10 +30,17 @@ const Navbar = () => {
   <p style={styles.text}>Streak</p>
 </Link>
 
+<Link to="/dashboard" style={styles.navLink}>
+  <div style={styles.badgeContainer}>
+    <img src="dashboard.png" height="24px"  />
+  </div>
+  <p style={styles.text}>DashBoard</p>
+</Link>
+
 
 
         <Link to="/member" style={styles.navLink}>
-          <p style={styles.icon}>📝</p>
+          <img src="members.jpg"  style={styles.profileIcon}/>
           <p style={styles.text}>Members</p>
         </Link>
 
@@ -102,7 +109,7 @@ const styles = {
   navLinks: {
     display: 'flex',
     alignItems: 'center',
-    gap: '20px',
+    gap: '10px',
   },
   navLink: {
     textDecoration: 'none',
@@ -140,16 +147,14 @@ badge: {
   navLinkHover: {
     backgroundColor: '#555',
   },
-  icon: {
-    fontSize: '20px',
-  },
+ 
   profileContainer: {
     position: 'relative',
     cursor: 'pointer',
   },
   profileIcon: {
-    height: '40px',
-    width: '40px',
+    height: '30px',
+    width: '30px',
     borderRadius: '50%',
     objectFit: 'cover',
     transition: 'transform 0.3s ease',

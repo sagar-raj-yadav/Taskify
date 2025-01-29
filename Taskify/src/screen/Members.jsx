@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import Header from '../components/Header';
-
+import axios from 'axios';
+import { MdDeleteForever } from "react-icons/md";
 
 const Members = () => {
   const [members, setMembers] = useState([]);
@@ -20,23 +21,64 @@ const Members = () => {
     }));
   };
 
-  const handleAddMember = () => {
-    const { name, email, contact, position ,team} = newMember;
-    if (name && email && contact && position && team) {
-      setMembers([
-        ...members,
-        { ...newMember }
-      ]);
-      setNewMember({
-        name: '',
-        email: '',
-        contact: '',
-        position: '',
-        team:''
-      });
-      setShowInputs(false); // Hide inputs after adding
+  // const handleAddMember = () => {
+  //   const { name, email, contact, position ,team} = newMember;
+  //   if (name && email && contact && position && team) {
+  //     setMembers([
+  //       ...members,
+  //       { ...newMember }
+  //     ]);
+  //     setNewMember({
+  //       name: '',
+  //       email: '',
+  //       contact: '',
+  //       position: '',
+  //       team:''
+  //     });
+  //     setShowInputs(false); // Hide inputs after adding
+  //   }
+  // };
+
+
+  const handleAddMember =async () => {
+    try{
+    await axios.post('http://localhost:3000/api/addmember',newMember);
+    fetchmembers();
+    setNewMember({
+      name: '',
+      email: '',
+      contact: '',
+      position: '',
+    });
+    }catch(error){
+      console.log(error);
     }
-  };
+  }
+
+ const fetchmembers = async () => {
+  try{
+    const response=await axios.get('http://localhost:3000/api/getmember');
+    console.log('API Response:', response.data);
+    setMembers(response.data.getallmember);
+  }catch(error){
+      console.log(error);
+    }
+ }
+
+ const deletemember=async(id)=>{
+  try{
+    await axios.delete(`http://localhost:3000/api/deletemember/${id}`);
+    fetchmembers();
+  }catch(error){
+      console.log(error);
+    }
+ }
+
+
+
+ useEffect(()=>{
+  fetchmembers();
+ },[])
 
   const handleCancel = () => {
     setNewMember({
@@ -44,7 +86,6 @@ const Members = () => {
       email: '',
       contact: '',
       position: '',
-      team:''
     });
     setShowInputs(false); // Hide inputs when cancel is clicked
   };
@@ -88,13 +129,13 @@ const Members = () => {
               placeholder="Position"
               style={styles.input}
             />
-             <input
+             {/* <input
               name="team"
               value={newMember.team}
               onChange={handleInputChange}
               placeholder="Team"
               style={styles.input}
-            />
+            /> */}
              <div style={styles.buttonContainer}>
             <button onClick={handleAddMember} style={styles.addButton}>Add</button>
             <button onClick={handleCancel} style={styles.cancelButton}>Cancel</button>
@@ -111,7 +152,7 @@ const Members = () => {
             <th style={styles.tableHeaderCell}>Email</th>
             <th style={styles.tableHeaderCell}>Contact</th>
             <th style={styles.tableHeaderCell}>Position</th>
-            <th style={styles.tableHeaderCell}>Team</th>
+            <th style={styles.tableHeaderCell}>Delete</th>
           </tr>
         </thead>
         <tbody>
@@ -121,7 +162,9 @@ const Members = () => {
               <td style={styles.tableCell}>{member.email}</td>
               <td style={styles.tableCell}>{member.contact}</td>
               <td style={styles.tableCell}>{member.position}</td>
-              <td style={styles.tableCell}>{member.team}</td>
+            <button 
+            onClick={()=>deletemember(member.id)}
+            style={{border:"none",outline:"none",background:"none"}}><td style={{...styles.tableCell,cursor:"pointer"}} ><MdDeleteForever color="red" fontSize="22px"/></td></button>  
             </tr>
           ))}
         </tbody>

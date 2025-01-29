@@ -13,9 +13,11 @@ const AllCard = () => {
     const [customCards, setCustomCards] = useState([]);
 
     const [Task,setTask]=useState([]);
+    const [isLoading, setIsLoading] = useState(true); // State for loading
 
     const fetchTasks = useCallback(async () => {
         try {
+            setIsLoading(true);
             const queryParams = new URLSearchParams();
 
             // Add filters dynamically to the query parameters
@@ -34,10 +36,13 @@ const AllCard = () => {
             const response = await axios.get(
                 `https://task-management-5ms8.onrender.com/api/task/fetchalltask?${queryParams.toString()}`
             );
-console.log(response.data.tasks)
+console.log(response.data.tasks);
             setTask(response.data.tasks);
         } catch (error) {
             console.error("Error fetching tasks:", error);
+        }
+        finally {
+            setIsLoading(false); // Set loading to false once data is fetched
         }
     }, [selectedStatus, selectedPriority, SearchTask]);
 
@@ -123,26 +128,28 @@ console.log(response.data.tasks)
         </div>
 
 
+ 
+
     <div style={styles.item} > 
-    <TaskSection title="TODO" tasks={taskByStatus['TODO']} addTask={addTask}/>
+    <TaskSection isLoading={isLoading} title="TODO" tasks={taskByStatus['TODO']} addTask={addTask}/>
     </div>
 
     <div style={styles.item} > 
-    <TaskSection title="DOING" tasks={taskByStatus['DOING']} addTask={addTask} />
+    <TaskSection isLoading={isLoading} title="DOING" tasks={taskByStatus['DOING']} addTask={addTask} />
     </div>
 
     <div style={styles.item} > 
-    <TaskSection title="DONE" tasks={taskByStatus['DONE']} addTask={addTask}/>
+    <TaskSection isLoading={isLoading} title="DONE" tasks={taskByStatus['DONE']} addTask={addTask}/>
     </div>
 
 
     {/* custom card */}
     {customCards.map((card, index) => (
         <div style={styles.item} key={index}>
-            <TaskSection title={card.title} tasks={card.tasks} />
+            <TaskSection   title={card.title} tasks={card.tasks} />
         </div>
     ))}
-
+    
 </div>
    
    </>
@@ -189,6 +196,7 @@ const styles = {
       scrollbarWidth: "none", 
       overflowY: "hidden",  
     },
+   
     item: {
     margin: "10px",
     borderRadius: "8px",
@@ -201,6 +209,7 @@ export default AllCard
 // PropTypes for validation
 TaskSection.propTypes = {
     title: PropTypes.string.isRequired,
+    isLoading:PropTypes.string.isRequired,
     tasks: PropTypes.arrayOf(
         PropTypes.shape({
             _id: PropTypes.string.isRequired,

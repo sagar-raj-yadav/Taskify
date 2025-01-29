@@ -1,15 +1,15 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { MdRadio } from "react-icons/md";
 import { RxActivityLog } from "react-icons/rx";
 import { TfiAlignLeft } from "react-icons/tfi";
+import axios from 'axios';
 
 const PopUp = ({ task, onEdit, onDelete ,onClose}) => {
   const [showInput, setShowInput] = useState(true);
   const [activityValue, setActivityValue] = useState("");
   const [description, setDescription] = useState("");
   const [allActivity, setAllActivity] = useState([]);
-  const [addMember, setAddMember] = useState(false);
 
   const showInputFunction = () => {
     if (description.trim() !== "") {
@@ -23,6 +23,25 @@ const PopUp = ({ task, onEdit, onDelete ,onClose}) => {
       setActivityValue("");
     }
   };
+
+
+  const [addMember, setAddMember] = useState(false);
+  const [members, setMembers] = useState([]);
+
+  // Function to fetch members from the API
+  const fetchMembers = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/api/getmember');
+      console.log('API Response:', response.data);
+      setMembers(response.data.getallmember); // Assuming the response contains an array of member names
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchMembers(); 
+  }, []);
 
   return (
     <div style={styles.mainContainer}>
@@ -101,14 +120,21 @@ const PopUp = ({ task, onEdit, onDelete ,onClose}) => {
 
           {/* Right Section: Join and Members */}
           <div style={styles.rightSection}>
-            <button
-              onClick={() => setAddMember(!addMember)}
-              style={styles.members}
-            >
-              {addMember ? "Members1" : "+ Members1"}
-            </button>
-            {/* Add similar buttons as needed */}
-          </div>
+  <button
+    onClick={() => setAddMember(!addMember)}
+    style={styles.members}
+  >
+    {members.map((member, index) => (
+      <button key={index} style={styles.memberBox}>
+        {member.name}
+      </button>
+    ))}
+  </button>
+</div>
+
+
+
+
         </div>
 
         {allActivity.map((value, index) => (
@@ -254,19 +280,12 @@ const styles = {
       marginTop: "20px",
     },
   leftSection: {
-    flex: 3, // Takes more space
+    flex: 3, 
     display: "flex",
     flexDirection: "column",
     gap: "15px",
   },
-  rightSection: {
-    flex: 1, // Takes less space
-    display: "flex",
-    flexDirection: "column",
-    gap: "4px",
-    alignItems: "flex-end",
-    justifyContent: "flex-start",
-  },
+
   join: {
     padding: "6px",
     width:"90%",
@@ -277,16 +296,45 @@ const styles = {
     cursor: "pointer",
     border: "none",
   },
+  rightSection: {
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    gap: "4px",
+    alignItems: "flex-end",
+    justifyContent: "flex-start",
+    padding: "10px",        
+    width: "100%",          
+  },
   members: {
     padding: "6px",
-    width:"90%",
+    width: "90%",
     borderRadius: "4px",
-    backgroundColor: "#8f8f8f",
-    color: "white",
     fontWeight: "bold",
     cursor: "pointer",
     border: "none",
+    display: "flex",        
+    flexDirection: "column",
+    alignItems: "flex-start", 
+    overflowY: "auto",        
+    maxHeight: "200px",  
+    outline:"none",
+    backgroundColor:  'rgb(216, 213, 212)',  
   },
+  
+  memberBox: {
+    backgroundColor: "#555",  
+    padding: "6px",          
+    borderRadius: "4px",       
+    marginBottom: "4px",       
+    width: "100%",            
+    textAlign: "center",   
+    border: "none",
+    outline:"none",
+    color:"white",
+    fontWeight:"bold",
+  },
+  
   description: {
     textAlign: "start",
     marginBottom: "15px",
