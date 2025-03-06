@@ -9,7 +9,12 @@ import PropTypes from "prop-types";
 
 const CountTask = ({totalTask,totalTodoTask,totalDoingTask,totalDoneTask}) => {
 
-  
+  const [hover,setHover]=useState({
+        total:false,
+        todo:false,
+        doing:false,
+        done:false
+    });
 
     return (
       <div style={styles.container}>
